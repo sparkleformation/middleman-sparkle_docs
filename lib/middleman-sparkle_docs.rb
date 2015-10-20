@@ -11,16 +11,6 @@ class SparkleDocs < ::Middleman::Extension
   end
 
   def before_build(builder)
-    # NOTE: Scrubbing in the `after_build` hoses everything on the
-    # next run. I have NFI why.
-    %w(sfn sparkle_formation).each do |item|
-      Dir.glob(File.join(app.config[:source], 'docs', item, '**', '**', '*.md')).each do |doc_item|
-        relative_path = doc_item.sub(File.join(app.config[:source], 'docs', ''), '')
-        FileUtils.rm(doc_item)
-        builder.say_status :scrub, File.join('docs', relative_path), :red
-      end
-    end
-
     %w(sfn sparkle_formation).each do |item|
       doc_path = File.join(Gem::Specification.find_by_name(item).full_gem_path, 'docs')
       Dir.glob(File.join(doc_path, '**', '**', '*.md')).each do |doc_item|
@@ -33,9 +23,20 @@ class SparkleDocs < ::Middleman::Extension
         builder.say_status :import, File.join('docs', item, relative_path)
       end
     end
+    # This is a crappy way to make it work, but it makes it work
     app.send(:remove_instance_variable, :@_sitemap)
     app.sitemap
     app.run_hook :ready
+  end
+
+  def after_build(builder)
+    %w(sfn sparkle_formation).each do |item|
+      Dir.glob(File.join(app.config[:source], 'docs', item, '**', '**', '*.md')).each do |doc_item|
+        relative_path = doc_item.sub(File.join(app.config[:source], 'docs', ''), '')
+        FileUtils.rm(doc_item)
+        builder.say_status :scrub, File.join('docs', relative_path), :red
+      end
+    end
   end
 
 end
