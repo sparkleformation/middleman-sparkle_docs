@@ -16,12 +16,12 @@ class SparkleDocs < ::Middleman::Extension
         FileUtils.rm(doc_item)
       end
     end
-    %w(sfn sparkle_formation).each do |item|
+    ['sfn', 'sparkle_formation', ['sparkle-guides', 'guides']].each do |item, item_alias|
       doc_path = File.join(Gem::Specification.find_by_name(item).full_gem_path, 'docs')
       Dir.glob(File.join(doc_path, '**', '**', '*.{md,png}')).each do |doc_item|
         next if doc_item.end_with?('README.md')
         relative_path = doc_item.sub(doc_path, '').sub(/^\//, '')
-        destination_path = File.join(app.config[:source], 'docs', item, relative_path)
+        destination_path = File.join(app.config[:source], 'docs', item_alias || item, relative_path)
         FileUtils.mkdir_p(File.dirname(destination_path))
         if(doc_item.end_with?('.md'))
           content = File.read(doc_item).gsub('.md', '.html')
