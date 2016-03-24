@@ -18,6 +18,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency("middleman-core", [">= 3.4.0"])
   s.add_runtime_dependency 'sfn'
   s.add_runtime_dependency 'sparkle_formation'
+  s.add_runtime_dependency 'sparkle-guides'
   # Additional dependencies
   # s.add_runtime_dependency("gem-name", "gem-version")
 end
